@@ -61,7 +61,6 @@ const BodyDeatils = ({ newSongs }) => {
         </View>
         <View style={styles.newSong}>
           {_.map(newSongTypes, (item, k) => {
-            console.log(k);
             return (
               <TouchableOpacity
                 onPress={() => setActivetype(k)}
