@@ -8,6 +8,7 @@ export const addAccount = async (email, username, password) => {
   const newAccount = { email, username, password };
   accounts.push(newAccount);
   await AsyncStorage.setItem("accounts", JSON.stringify(accounts));
+  console.log(accounts);
 };
 
 // lấy danh sách tài khoản từ AsyncStorage
@@ -20,6 +21,10 @@ export const getAccounts = async () => {
   }
 };
 
-// sử dụng hàm getAccounts để lấy danh sách tài khoản
-export const accountsList = getAccounts();
-console.log(accountsList);
+const deleteData = async (key) => {
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (error) {
+    console.log(error);
+  }
+};
