@@ -9,6 +9,7 @@ import { homeUrl } from "../../../Api/home";
 function HomeDetails() {
   const [data, setSlide] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [logout, setLogout] = useState(false)
 
   const fetchBanner = async () => {
     setLoading(true);
@@ -34,8 +35,8 @@ function HomeDetails() {
   return (
     <SafeAreaView>
       <ScrollView>
-        <Header />
-        <Slide slides={slides} loading={loading} />
+        <Header logout={logout} setLogout={setLogout} />
+        <Slide slides={slides} loading={loading} logout={logout} />
         <BodyDeatils newSongs={newSongs} />
       </ScrollView>
     </SafeAreaView>

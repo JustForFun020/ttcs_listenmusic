@@ -1,36 +1,31 @@
-import React from "react";
-import { View, SafeAreaView, TextInput, StyleSheet } from "react-native";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import React, { useState } from 'react';
+import { View, SafeAreaView, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 
-const Header = () => {
-  const [number, onChangeNumber] = React.useState("");
+const Header = ({ logout, setLogout }) => {
+  const [text, setText] = useState('');
 
   return (
     <SafeAreaView style={styles.header}>
-      <View style={styles.icon}>
-        <AntDesign name="user" size={24} color="black" />
-      </View>
+      <TouchableOpacity style={styles.icon} onPress={() => setLogout(!logout)}>
+        <AntDesign name='user' size={24} color='black' />
+      </TouchableOpacity>
       <View
         style={{
-          justifyContent: "center",
+          justifyContent: 'center',
         }}
       >
-        <AntDesign
-          name="search1"
-          size={15}
-          color="black"
-          style={{ position: "absolute", bottom: 16, left: 22 }}
-        />
+        <AntDesign name='search1' size={15} color='black' style={{ position: 'absolute', bottom: 16, left: 22 }} />
         <TextInput
           style={styles.input}
-          onChangeText={onChangeNumber}
-          value={number}
-          placeholder="Tìm kiếm bài hát...."
-          keyboardType="default"
+          onChangeText={setText}
+          value={text}
+          placeholder='Tìm kiếm bài hát....'
+          keyboardType='default'
         />
       </View>
       <View style={styles.icon}>
-        <Ionicons name="notifications" size={24} color="#ADADAD" />
+        <Ionicons name='notifications' size={24} color='#ADADAD' />
       </View>
     </SafeAreaView>
   );
@@ -40,10 +35,10 @@ export default Header;
 
 const styles = StyleSheet.create({
   header: {
-    height: 50,
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row",
+    height: 55,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
     marginTop: 30,
     paddingLeft: 10,
     paddingRight: 10,
@@ -51,10 +46,11 @@ const styles = StyleSheet.create({
   icon: {
     height: 28,
     width: 30,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 100,
+    position: 'relative',
   },
   input: {
     height: 25,
@@ -66,6 +62,6 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     paddingLeft: 30,
     paddingRight: 30,
-    borderColor: "#ADADAD",
+    borderColor: '#ADADAD',
   },
 });
