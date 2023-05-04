@@ -7,7 +7,6 @@ import { FontAwesome } from '@expo/vector-icons';
 
 const AvailableMusic = (props) => {
   const [active, setActive] = useState(0);
-  const [category, setCategory] = useState('Nhạc mới');
 
   const categoryMusic = ['Nhạc Mới', 'Top Yêu Thích', 'Top View'];
 

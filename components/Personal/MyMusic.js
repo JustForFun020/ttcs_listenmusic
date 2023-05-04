@@ -11,6 +11,7 @@ const MyMusic = (props) => {
   const [listMusic, setListMusic] = useState([]);
   const [favorMusic, setFavorMusic] = useState([]);
   const [listMusicScreen, setListMusicScreen] = useState(false);
+  console.log(listMusic);
 
   const navigation = useNavigation();
 
