@@ -5,6 +5,7 @@ import HomeFooter from '../Home/HomeFooter';
 import MyMusic from './MyMusic';
 import { newMusicUrl, topFavoriteUrl, topViewUrl } from '../../Api/listmusic';
 import Header from '../Home/HomeDetail/Header';
+import PlayMusic from '../PlayMusic';
 
 const Personal = () => {
   const [newMusic, setNewMusic] = useState([]);

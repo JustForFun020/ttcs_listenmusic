@@ -1,24 +1,57 @@
 import _ from 'lodash';
-import moment from 'moment';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { SafeAreaView, useSafeAreaFrame } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
 import AvailableMusic from './AvailableMusic';
 import { useNavigation } from '@react-navigation/native';
+import PlayMusic from '../PlayMusic';
+import { Audio } from 'expo-av';
 
 const MyMusic = (props) => {
   const [listMusic, setListMusic] = useState([]);
   const [favorMusic, setFavorMusic] = useState([]);
   const [listMusicScreen, setListMusicScreen] = useState(false);
-  console.log(listMusic);
+  const [playMusic, setPlayMusic] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playingSong, setPlayingSong] = useState([]);
+  const [sound, setSound] = useState();
 
   const navigation = useNavigation();
 
   const { news, favorite, view, logout } = props;
 
-  const handleRenderMusic = (listMusic) => {
-    if (_.isEmpty(listMusic)) {
+  const removeMusic = (id) => {
+    const deletedSong = _.clone(listMusic);
+    const index = _.findIndex(deletedSong, (item) => item._id === id);
+    deletedSong.splice(index, 1);
+    setListMusic(deletedSong);
+  };
+
+  const handlePlayMusic = async (song) => {
+    try {
+      setIsPlaying(!isPlaying);
+      setPlayMusic(song);
+      setPlayingSong(song);
+      const { sound } = await Audio.Sound.createAsync({ uri: song.src_music });
+      setSound(sound);
+
+      !isPlaying ? await sound.playAsync() : await sound.pauseAsync();
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
+  const handleRenderMusic = (listMyMusic) => {
+    if (_.isEmpty(listMyMusic)) {
       return (
         <View style={{ alignItems: 'center' }}>
           <Text style={{ marginTop: 10, marginBottom: 10 }}>Không có bài hát nào</Text>
@@ -31,7 +64,7 @@ const MyMusic = (props) => {
     } else {
       return (
         <View>
-          {_.map(listMusic, (song) => {
+          {_.map(listMyMusic, (song) => {
             return (
               <View key={song._id} style={styles.song}>
                 <TouchableOpacity style={styles.infoAMusic}>
@@ -46,13 +79,17 @@ const MyMusic = (props) => {
                   </View>
                 </TouchableOpacity>
                 <View style={{ flexDirection: 'row' }}>
-                  <TouchableOpacity style={{ padding: 8 }}>
-                    <AntDesign name='playcircleo' size={24} color='black' />
+                  <TouchableOpacity style={{ padding: 8 }} onPress={() => handlePlayMusic(song)}>
+                    {isPlaying && playMusic && playMusic._id === song._id ? (
+                      <AntDesign name='pausecircleo' size={24} color='black' />
+                    ) : (
+                      <AntDesign name='playcircleo' size={24} color='black' />
+                    )}
                   </TouchableOpacity>
                   <TouchableOpacity style={{ padding: 8 }}>
                     <AntDesign name='hearto' size={24} color='black' />
                   </TouchableOpacity>
-                  <TouchableOpacity style={{ padding: 8 }}>
+                  <TouchableOpacity style={{ padding: 8 }} onPress={() => removeMusic(song._id)}>
                     <AntDesign name='closecircleo' size={24} color='red' />
                   </TouchableOpacity>
                 </View>
@@ -77,7 +114,7 @@ const MyMusic = (props) => {
           <Text style={styles.logoutText}>Đăng xuất</Text>
         </TouchableOpacity>
       )}
-      <View style={{ width: '100%', height: '100%' }}>
+      <View style={{ width: '100%', height: '100%', position: 'relative', alignItems: 'center' }}>
         {listMusicScreen ? (
           <AvailableMusic
             news={news}
@@ -87,7 +124,9 @@ const MyMusic = (props) => {
             handleAddMyMusic={(item) => setListMusic([...listMusic, item])}
           />
         ) : (
-          <ScrollView style={{ height: '100%' }}>
+          <ScrollView
+            style={isPlaying ? { height: '75%', position: 'absolute' } : { height: '82%', position: 'absolute' }}
+          >
             <View style={{ marginTop: 0 }}>
               <Text style={styles.myMusicText}>Nhạc của tôi</Text>
               <View>{handleRenderMusic(listMusic)}</View>
@@ -99,6 +138,11 @@ const MyMusic = (props) => {
           </ScrollView>
         )}
       </View>
+      {isPlaying && (
+        // <View style={{ width: '100%', height: 68, position: 'absolute', top: 645 }}>
+        <PlayMusic song={playingSong} isPlaying={isPlaying} />
+        // </View>
+      )}
     </SafeAreaView>
   );
 };

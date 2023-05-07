@@ -1,50 +1,32 @@
 import _ from 'lodash';
 import moment from 'moment';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 
 const AvailableMusic = (props) => {
   const [active, setActive] = useState(0);
+  const [availableMusic, setAvailableMusic] = useState(news);
+  const [selectedMusic, setSelectedMusic] = useState([]);
 
   const categoryMusic = ['Nhạc Mới', 'Top Yêu Thích', 'Top View'];
 
   const { news, favorites, views, setListMusicScreen } = props;
 
   const handleAddMyMusics = (song) => {
+    setAvailableMusic(_.filter(availableMusic, (item) => item !== song));
+    setSelectedMusic([...selectedMusic, song]);
     props.handleAddMyMusic(song);
   };
 
-  const renderMusic = (music) => {
-    return (
-      <View>
-        {_.map(music, (infoMusic) => {
-          return (
-            <View key={infoMusic._id} style={styles.infoMusic}>
-              <TouchableOpacity style={styles.infoAMusic}>
-                <Image source={{ uri: infoMusic.image_music }} style={styles.image} />
-                <View style={{ marginLeft: 10 }}>
-                  <Text numberOfLines={1} style={{ width: 200 }}>
-                    {infoMusic.name_music}
-                  </Text>
-                  <Text numberOfLines={1} style={{ width: 200, opacity: 0.5 }}>
-                    {infoMusic.name_singer}
-                  </Text>
-                  <Text numberOfLines={1} style={{ width: 220, opacity: 0.5 }}>
-                    Ngày phát hành: {moment.duration(moment().diff(infoMusic.createdAt)).humanize()} ago
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleAddMyMusics(infoMusic)} style={{ padding: 8 }}>
-                <AntDesign name='pluscircleo' size={24} color='#917FB3' />
-              </TouchableOpacity>
-            </View>
-          );
-        })}
-      </View>
-    );
-  };
+  useEffect(() => {
+    if (active === 0) {
+      setAvailableMusic(news);
+    } else if (active === 1) {
+      setAvailableMusic(favorites);
+    } else setAvailableMusic(views);
+  }, [active]);
 
   return (
     <View style={styles.availableMusicContainer}>
@@ -70,7 +52,31 @@ const AvailableMusic = (props) => {
               );
             })}
           </View>
-          <View>{active === 0 ? renderMusic(news) : active === 1 ? renderMusic(favorites) : renderMusic(views)}</View>
+          <View>
+            {_.map(availableMusic, (infoMusic) => {
+              return (
+                <View key={infoMusic._id} style={styles.infoMusic}>
+                  <TouchableOpacity style={styles.infoAMusic}>
+                    <Image source={{ uri: infoMusic.image_music }} style={styles.image} />
+                    <View style={{ marginLeft: 10 }}>
+                      <Text numberOfLines={1} style={{ width: 200 }}>
+                        {infoMusic.name_music}
+                      </Text>
+                      <Text numberOfLines={1} style={{ width: 200, opacity: 0.5 }}>
+                        {infoMusic.name_singer}
+                      </Text>
+                      <Text numberOfLines={1} style={{ width: 220, opacity: 0.5 }}>
+                        Ngày phát hành: {moment.duration(moment().diff(infoMusic.createdAt)).humanize()} ago
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => handleAddMyMusics(infoMusic)} style={{ padding: 8 }}>
+                    <AntDesign name='pluscircleo' size={24} color='#917FB3' />
+                  </TouchableOpacity>
+                </View>
+              );
+            })}
+          </View>
         </ScrollView>
       </View>
     </View>
