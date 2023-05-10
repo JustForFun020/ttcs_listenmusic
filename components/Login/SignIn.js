@@ -7,12 +7,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
+import * as api from '../../Api';
 
 const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [hidePass, setHidePass] = useState(true);
   const [listAccounts, setListAccounts] = useState([]);
+
+  useEffect(() => {
+    const fetchAPI = async () => {
+      const res = await api.getHome();
+    };
+
+    fetchAPI();
+  }, []);
 
   const navigation = useNavigation();
 

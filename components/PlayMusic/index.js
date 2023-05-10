@@ -3,23 +3,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
-import { Audio } from 'expo-av';
+import { playSound } from './playMusic';
 
-export default function PlayMusic({ song, isPlaying }) {
-  const [isPlayingSound, setIsPlayingSound] = useState(isPlaying);
+export default function PlayMusic(props) {
+  const [isPlayingSound, setIsPlayingSound] = useState(true);
   const [sound, setSound] = useState();
 
-  const playSound = async () => {
-    try {
-      setIsPlayingSound(!isPlayingSound);
-      const { sound } = await Audio.Sound.createAsync({ uri: song.src_music });
-      setSound(sound);
-      await sound.playAsync();
-      !isPlayingSound ? sound.playAsync() : sound.pauseAsync();
-    } catch (error) {
-      throw error;
-    }
-  };
+  const { song, isPlaying, setIsPlaying } = props;
 
   useEffect(() => {
     return sound
@@ -59,8 +49,11 @@ export default function PlayMusic({ song, isPlaying }) {
           </View>
         </TouchableOpacity>
         <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity style={{ padding: 8 }} onPress={playSound}>
-            {isPlaying ? (
+          <TouchableOpacity
+            style={{ padding: 8 }}
+            onPress={() => playSound(song, isPlayingSound, setIsPlayingSound, setSound, setIsPlaying)}
+          >
+            {isPlayingSound ? (
               <AntDesign name='pausecircleo' size={24} color='black' />
             ) : (
               <AntDesign name='playcircleo' size={24} color='black' />

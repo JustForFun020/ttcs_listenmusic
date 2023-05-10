@@ -6,7 +6,7 @@ import { AntDesign } from '@expo/vector-icons';
 import AvailableMusic from './AvailableMusic';
 import { useNavigation } from '@react-navigation/native';
 import PlayMusic from '../PlayMusic';
-import { Audio } from 'expo-av';
+import { playSound } from '../PlayMusic/playMusic';
 
 const MyMusic = (props) => {
   const [listMusic, setListMusic] = useState([]);
@@ -30,13 +30,9 @@ const MyMusic = (props) => {
 
   const handlePlayMusic = async (song) => {
     try {
-      setIsPlaying(!isPlaying);
+      playSound(song, isPlaying, setIsPlaying, setSound);
       setPlayMusic(song);
       setPlayingSong(song);
-      const { sound } = await Audio.Sound.createAsync({ uri: song.src_music });
-      setSound(sound);
-
-      !isPlaying ? await sound.playAsync() : await sound.pauseAsync();
     } catch (error) {
       throw error;
     }
@@ -138,11 +134,7 @@ const MyMusic = (props) => {
           </ScrollView>
         )}
       </View>
-      {isPlaying && (
-        // <View style={{ width: '100%', height: 68, position: 'absolute', top: 645 }}>
-        <PlayMusic song={playingSong} isPlaying={isPlaying} />
-        // </View>
-      )}
+      {isPlaying && <PlayMusic song={playingSong} isPlaying={isPlaying} setIsPlaying={setIsPlaying} />}
     </SafeAreaView>
   );
 };
