@@ -13,7 +13,6 @@ const AvailableMusic = (props) => {
   const categoryMusic = ['Nhạc Mới', 'Top Yêu Thích', 'Top View'];
 
   const { news, favorites, views, setListMusicScreen, isPlaying } = props;
-  console.log(props.isPlaying);
 
   const handleAddMyMusics = (song) => {
     setAvailableMusic(_.filter(availableMusic, (item) => item !== song));

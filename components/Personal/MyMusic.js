@@ -1,12 +1,11 @@
 import _ from 'lodash';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
-import { SafeAreaView, useSafeAreaFrame } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
 import AvailableMusic from './AvailableMusic';
 import { useNavigation } from '@react-navigation/native';
 import PlayMusic from '../PlayMusic';
-import { Audio } from 'expo-av';
 
 const MyMusic = (props) => {
   const [listMusic, setListMusic] = useState([]);
