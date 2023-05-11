@@ -2,19 +2,22 @@ import _ from 'lodash';
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome5, FontAwesome } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
+import Slider from '@react-native-community/slider';
 
-export default function PlayMusic({ song, isPlaying }) {
+export default function PlayMusic({ song, isPlaying, setIsPlaying }) {
   const [isPlayingSound, setIsPlayingSound] = useState(isPlaying);
   const [sound, setSound] = useState();
+  const [position, setPosition] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   const playSound = async () => {
     try {
       setIsPlayingSound(!isPlayingSound);
-      const { sound } = await Audio.Sound.createAsync({ uri: song.src_music });
+      setIsPlaying(!isPlaying);
+      const { sound } = await Audio.Sound.createAsync({ uri: song.src_music }, { shouldPlay: true });
       setSound(sound);
-      await sound.playAsync();
       !isPlayingSound ? sound.playAsync() : sound.pauseAsync();
     } catch (error) {
       throw error;
@@ -29,6 +32,35 @@ export default function PlayMusic({ song, isPlaying }) {
       : undefined;
   }, [sound]);
 
+  useEffect(() => {
+    const playSound = async () => {
+      try {
+        const { sound } = await Audio.Sound.createAsync({ uri: song.src_music });
+        setSound(sound);
+        await sound.playAsync();
+        isPlayingSound ? sound.playAsync() : sound.pauseAsync();
+        sound.setOnPlaybackStatusUpdate((status) => {
+          setPosition(status.positionMillis);
+          setDuration(status.durationMillis);
+        });
+      } catch (error) {
+        throw error;
+      }
+    };
+    playSound();
+  }, []);
+
+  function formatTime(milliseconds) {
+    const seconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  }
+
+  async function seekTo(position) {
+    await sound.setPositionAsync(position);
+  }
+
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
   const rotate = rotateAnim.interpolate({
@@ -39,7 +71,7 @@ export default function PlayMusic({ song, isPlaying }) {
   Animated.loop(
     Animated.timing(rotateAnim, {
       toValue: 1,
-      duration: 10000,
+      duration: 5000,
       useNativeDriver: true,
     }),
   ).start();
@@ -59,21 +91,31 @@ export default function PlayMusic({ song, isPlaying }) {
           </View>
         </TouchableOpacity>
         <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity style={{ padding: 8 }}>
+            <FontAwesome name='backward' size={24} color='black' />
+          </TouchableOpacity>
           <TouchableOpacity style={{ padding: 8 }} onPress={playSound}>
-            {isPlaying ? (
+            {isPlayingSound ? (
               <AntDesign name='pausecircleo' size={24} color='black' />
             ) : (
               <AntDesign name='playcircleo' size={24} color='black' />
             )}
           </TouchableOpacity>
           <TouchableOpacity style={{ padding: 8 }}>
-            <AntDesign name='hearto' size={24} color='black' />
-          </TouchableOpacity>
-          <TouchableOpacity style={{ padding: 8 }}>
-            <AntDesign name='closecircleo' size={24} color='red' />
+            <FontAwesome name='forward' size={24} color='black' />
           </TouchableOpacity>
         </View>
       </View>
+      <Slider
+        style={{ width: '100%', position: 'absolute', bottom: 4 }}
+        minimumValue={0}
+        maximumValue={duration}
+        value={position}
+        minimumTrackTintColor='#FFFFFF'
+        maximumTrackTintColor='#000000'
+        thumbTintColor='#FFFFFF'
+        onSlidingComplete={seekTo}
+      />
     </SafeAreaView>
   );
 }
@@ -81,12 +123,13 @@ export default function PlayMusic({ song, isPlaying }) {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 70,
+    height: 80,
     backgroundColor: '#D6E8DB',
     paddingLeft: 10,
     paddingRight: 10,
     position: 'absolute',
-    top: 638,
+    top: 630,
+    alignItems: 'center',
   },
   song: {
     flexDirection: 'row',

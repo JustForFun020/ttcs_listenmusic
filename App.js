@@ -7,17 +7,19 @@ import HomeContainer from './components/Home/HomeContainer';
 import Personal from './components/Personal/Personal';
 import SignIn from './components/Login/SignIn';
 import SignUp from './components/Login/SignUp';
+import ChartContainer from './components/Chart/ChartContainer';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='SignIn' screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName='ChartContainer' screenOptions={{ headerShown: false }}>
         <Stack.Screen name='SignIn' component={SignIn} />
         <Stack.Screen name='SignUp' component={SignUp} />
         <Stack.Screen name='Personal' component={Personal} />
         <Stack.Screen name='HomeContainer' component={HomeContainer} />
+        <Stack.Screen name='ChartContainer' component={ChartContainer} />
       </Stack.Navigator>
     </NavigationContainer>
   );
