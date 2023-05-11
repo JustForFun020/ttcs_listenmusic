@@ -12,7 +12,7 @@ const AvailableMusic = (props) => {
 
   const categoryMusic = ['Nhạc Mới', 'Top Yêu Thích', 'Top View'];
 
-  const { news, favorites, views, setListMusicScreen } = props;
+  const { news, favorites, views, setListMusicScreen, isPlaying } = props;
 
   const handleAddMyMusics = (song) => {
     setAvailableMusic(_.filter(availableMusic, (item) => item !== song));
@@ -38,7 +38,7 @@ const AvailableMusic = (props) => {
           style={styles.btnClose}
           onPress={() => setListMusicScreen(false)}
         />
-        <ScrollView style={styles.listMusicAvailable}>
+        <ScrollView style={!isPlaying ? styles.listMusicAvailable : styles.listMusicAvailable_ing}>
           <Text style={styles.title}>Bài hát có sẵn</Text>
           <View style={styles.category}>
             {_.map(categoryMusic, (item, k) => {
@@ -101,6 +101,12 @@ const styles = StyleSheet.create({
   },
   listMusicAvailable: {
     height: '85%',
+    width: '100%',
+    marginTop: 30,
+    backgroundColor: '#fff',
+  },
+  listMusicAvailable_ing: {
+    height: '74%',
     width: '100%',
     marginTop: 30,
     backgroundColor: '#fff',

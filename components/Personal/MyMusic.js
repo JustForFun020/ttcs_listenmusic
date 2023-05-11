@@ -1,12 +1,11 @@
 import _ from 'lodash';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
-import { SafeAreaView, useSafeAreaFrame } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
 import AvailableMusic from './AvailableMusic';
 import { useNavigation } from '@react-navigation/native';
 import PlayMusic from '../PlayMusic';
-import { Audio } from 'expo-av';
 
 const MyMusic = (props) => {
   const [listMusic, setListMusic] = useState([]);
@@ -28,27 +27,11 @@ const MyMusic = (props) => {
     setListMusic(deletedSong);
   };
 
-  const handlePlayMusic = async (song) => {
-    try {
-      setIsPlaying(!isPlaying);
-      setPlayMusic(song);
-      setPlayingSong(song);
-      const { sound } = await Audio.Sound.createAsync({ uri: song.src_music });
-      setSound(sound);
-
-      !isPlaying ? await sound.playAsync() : await sound.pauseAsync();
-    } catch (error) {
-      throw error;
-    }
+  const handlePlayMusic = (song) => {
+    setIsPlaying(!isPlaying);
+    setPlayMusic(song);
+    setPlayingSong(song);
   };
-
-  useEffect(() => {
-    return sound
-      ? () => {
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
 
   const handleRenderMusic = (listMyMusic) => {
     if (_.isEmpty(listMyMusic)) {
@@ -79,15 +62,15 @@ const MyMusic = (props) => {
                   </View>
                 </TouchableOpacity>
                 <View style={{ flexDirection: 'row' }}>
+                  <TouchableOpacity style={{ padding: 8 }}>
+                    <AntDesign name='hearto' size={24} color='black' />
+                  </TouchableOpacity>
                   <TouchableOpacity style={{ padding: 8 }} onPress={() => handlePlayMusic(song)}>
                     {isPlaying && playMusic && playMusic._id === song._id ? (
                       <AntDesign name='pausecircleo' size={24} color='black' />
                     ) : (
                       <AntDesign name='playcircleo' size={24} color='black' />
                     )}
-                  </TouchableOpacity>
-                  <TouchableOpacity style={{ padding: 8 }}>
-                    <AntDesign name='hearto' size={24} color='black' />
                   </TouchableOpacity>
                   <TouchableOpacity style={{ padding: 8 }} onPress={() => removeMusic(song._id)}>
                     <AntDesign name='closecircleo' size={24} color='red' />
@@ -121,11 +104,12 @@ const MyMusic = (props) => {
             favorites={favorite}
             views={view}
             setListMusicScreen={setListMusicScreen}
+            isPlaying={isPlaying}
             handleAddMyMusic={(item) => setListMusic([...listMusic, item])}
           />
         ) : (
           <ScrollView
-            style={isPlaying ? { height: '75%', position: 'absolute' } : { height: '82%', position: 'absolute' }}
+            style={isPlaying ? { height: '73%', position: 'absolute' } : { height: '82%', position: 'absolute' }}
           >
             <View style={{ marginTop: 0 }}>
               <Text style={styles.myMusicText}>Nhạc của tôi</Text>
@@ -138,11 +122,7 @@ const MyMusic = (props) => {
           </ScrollView>
         )}
       </View>
-      {isPlaying && (
-        // <View style={{ width: '100%', height: 68, position: 'absolute', top: 645 }}>
-        <PlayMusic song={playingSong} isPlaying={isPlaying} />
-        // </View>
-      )}
+      {isPlaying && <PlayMusic song={playingSong} isPlaying={isPlaying} setIsPlaying={setIsPlaying} />}
     </SafeAreaView>
   );
 };

@@ -12,7 +12,7 @@ const deleteData = async (key) => {
   try {
     await AsyncStorage.removeItem(key);
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
