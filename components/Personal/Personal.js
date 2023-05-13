@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React, { useState, useEffect } from 'react';
-import { View, Text, SafeAreaView, ActivityIndicator, StyleSheet } from 'react-native';
+import { Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import HomeFooter from '../Home/HomeFooter';
 import MyMusic from './MyMusic';
 import { newMusicUrl, topFavoriteUrl, topViewUrl } from '../../Api/listmusic';

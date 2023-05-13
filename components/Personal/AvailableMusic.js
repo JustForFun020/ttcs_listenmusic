@@ -44,6 +44,7 @@ const AvailableMusic = (props) => {
             {_.map(categoryMusic, (item, k) => {
               return (
                 <TouchableOpacity
+                  key={k}
                   style={active === k ? styles.categoryItemActive : styles.categoryItem}
                   onPress={() => setActive(k)}
                 >
