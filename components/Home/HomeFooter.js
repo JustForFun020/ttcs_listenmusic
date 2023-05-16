@@ -23,10 +23,6 @@ function HomeFooter() {
         <Feather name='radio' size={20} color='black' style={{ opacity: 0.7 }} />
         <Text style={style.listItemText}>Radio</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={style.listItem} onPress={() => navigation.navigate('FollowContainer')}>
-        <FontAwesome name='newspaper-o' size={20} color='black' style={{ opacity: 0.7 }} />
-        <Text style={style.listItemText}>Theo dõi</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }

@@ -17,10 +17,10 @@ export default function ChartContainer() {
   const fetchChartData = async () => {
     setLoading(true);
     try {
-      setLoading(false);
       const fetchData = await fetch(chartHomeUrl);
       const res = await fetchData.json();
       setChartData(res);
+      setLoading(false);
     } catch (error) {
       setLoading(false);
       throw error;
@@ -36,28 +36,27 @@ export default function ChartContainer() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {loading && (
-        <View
-          style={{
-            height: 250,
-            backgroundColor: '#fff',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'row',
-          }}
-        >
-          <Text style={{ fontSize: 24, marginRight: 4, color: 'green' }}>Loading...</Text>
-          <ActivityIndicator size='small' color='green' />
-        </View>
-      )}
       <Header logout={logout} setLogout={setLogout} />
+
       <LinearGradient colors={['#99627A', '#643843']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1 }}>
         <View style={styles.headerContent}>
           <Text style={styles.content}>Bảng Xếp Hạng</Text>
         </View>
-        <ScrollView>
-          <Chart items={items} />
-        </ScrollView>
+        {loading ? (
+          <LinearGradient
+            colors={['#99627A', '#643843']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Text style={{ color: 'white', fontSize: 24 }}>Loading...</Text>
+            <ActivityIndicator size='large' color='white' />
+          </LinearGradient>
+        ) : (
+          <ScrollView>
+            <Chart items={items} />
+          </ScrollView>
+        )}
       </LinearGradient>
       <HomeFooter />
     </SafeAreaView>

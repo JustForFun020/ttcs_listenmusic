@@ -8,7 +8,6 @@ import Personal from './components/Personal/Personal';
 import SignIn from './components/Login/SignIn';
 import SignUp from './components/Login/SignUp';
 import ChartContainer from './components/Chart/ChartContainer';
-import FollowContainer from './components/Follow/FollowContainer';
 import RadioContainer from './components/Radio/RadioContainer';
 
 const Stack = createNativeStackNavigator();
@@ -22,7 +21,6 @@ export default function App() {
         <Stack.Screen name='Personal' component={Personal} />
         <Stack.Screen name='HomeContainer' component={HomeContainer} />
         <Stack.Screen name='ChartContainer' component={ChartContainer} />
-        <Stack.Screen name='FollowContainer' component={FollowContainer} />
         <Stack.Screen name='RadioContainer' component={RadioContainer} />
       </Stack.Navigator>
     </NavigationContainer>
