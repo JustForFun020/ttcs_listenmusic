@@ -42,6 +42,10 @@ export default function PlayMusic({ song, isPlaying, setIsPlaying }) {
         sound.setOnPlaybackStatusUpdate((status) => {
           setPosition(status.positionMillis);
           setDuration(status.durationMillis);
+          if (status.isLoaded && !status.isPlaying && status.positionMillis === status.durationMillis) {
+            setIsPlayingSound(false);
+            setIsPlaying(false);
+          }
         });
       } catch (error) {
         throw error;
@@ -94,7 +98,15 @@ export default function PlayMusic({ song, isPlaying, setIsPlaying }) {
           <TouchableOpacity style={{ padding: 8 }}>
             <FontAwesome name='backward' size={24} color='black' />
           </TouchableOpacity>
-          <TouchableOpacity style={{ padding: 8 }} onPress={playSound}>
+          <TouchableOpacity
+            style={{ padding: 8 }}
+            onPress={() => {
+              playSound();
+              if (isPlayingSound) {
+                setIsPlayingSound(false);
+              }
+            }}
+          >
             {isPlayingSound ? (
               <AntDesign name='pausecircleo' size={24} color='black' />
             ) : (
