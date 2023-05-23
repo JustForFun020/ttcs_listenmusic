@@ -1,13 +1,41 @@
 import _ from 'lodash';
-import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import HomeFooter from '../Home/HomeFooter';
 import Header from '../Home/HomeDetail/Header';
 import { LinearGradient } from 'expo-linear-gradient';
+import { AntDesign } from '@expo/vector-icons';
+import { Audio } from 'expo-av';
+import { useEffect } from 'react';
 
 const DetailsPodcast = ({ route }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [sound, setSound] = useState();
+  const [pod, setPod] = useState();
+
   const { podcast } = route.params;
+
+  const playSound = async (a) => {
+    const sound = new Audio.Sound();
+    setIsPlaying(!isPlaying);
+    setPod(a);
+    try {
+      await sound.loadAsync({ uri: a.api });
+      setSound(sound);
+      !isPlaying ? sound.playAsync() : sound.pauseAsync;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync();
+        }
+      : undefined;
+  });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -30,15 +58,31 @@ const DetailsPodcast = ({ route }) => {
             </Text>
           </View>
           <View style={styles.listPodcastPlay}>
-            <Text style={styles.listPodcastPlayText}>Danh Sách Phát</Text>
+            <Text style={styles.listPodcastPlayText}>Danh Sách Podcast</Text>
             <View>
               {_.map(podcast.list_podcast, (listpodcast) => {
-                const a = Object.entries(listpodcast)[0][1];
+                const epi = Object.entries(listpodcast)[0][1];
                 return (
-                  <View style={styles.listPodcastPlayDetails}>
-                    <Text>
-                      {podcast.title} {a.id}
-                    </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Image style={styles.thumbnail} source={{ uri: podcast.thumbnail }} />
+                    <View style={styles.listPodcastPlayDetails}>
+                      <Text numberOfLines={2} style={{ width: 220 }}>
+                        {podcast.title} {epi.epi}
+                      </Text>
+                      <TouchableOpacity onPress={() => playSound(epi)}>
+                        {isPlaying && pod.id === epi.id ? (
+                          <View style={styles.playPodcast}>
+                            <Text style={{ color: 'white', marginRight: 4 }}>Pause</Text>
+                            <AntDesign name='pausecircleo' size={20} color='white' />
+                          </View>
+                        ) : (
+                          <View style={styles.playPodcast}>
+                            <Text style={{ color: 'white', marginRight: 4 }}>Play</Text>
+                            <AntDesign name='playcircleo' size={20} color='white' />
+                          </View>
+                        )}
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 );
               })}
@@ -77,5 +121,23 @@ const styles = StyleSheet.create({
   },
   listPodcastPlayDetails: {
     marginTop: 20,
+  },
+  thumbnail: {
+    width: 70,
+    height: 70,
+    borderRadius: 12,
+    marginRight: 30,
+  },
+  playPodcast: {
+    flexDirection: 'row',
+    backgroundColor: '#A459D1',
+    width: 80,
+    height: 34,
+    paddingLeft: 4,
+    paddingRight: 4,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
   },
 });

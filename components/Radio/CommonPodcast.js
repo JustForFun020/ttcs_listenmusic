@@ -4,25 +4,27 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { data } from '../../Api/radio';
 import { AntDesign } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
-import { Asset } from 'expo-asset';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 
 const CommonPodcast = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [episode, setEpisode] = useState();
+  const [epiID, setEpiID] = useState();
 
   const navigation = useNavigation();
 
   const renderDetailsPodcast = (podcast) => {
-    navigation.navigate('DetailsPodcast', { podcast });
+    navigation.navigate('DetailsPodcast', {
+      podcast: podcast,
+    });
   };
 
   const playSound = async (podcast) => {
     const sound = new Audio.Sound();
     setIsPlaying(!isPlaying);
+    setEpiID(podcast);
     try {
-      console.log(podcast.src_mp4);
       if (podcast.src_mp4 === '../../assets/podcast/p1_41.m4a') {
         await sound.loadAsync(require('../../assets/podcast/p1_41.m4a'));
       } else if (podcast.src_mp4 === '../../assets/podcast/p2_01.m4a') {
@@ -64,17 +66,26 @@ const CommonPodcast = () => {
                       <View style={{ flexDirection: 'row' }}>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', width: 220 }} numberOfLines={2}>
                           {idPod === '6BUUFAEO'
-                            ? `How2Money x Doctor Housing ${pod[1].id}`
+                            ? `How2Money x Doctor Housing ${pod[1].epi}`
                             : idPod === '6BWAABIO'
-                            ? `HIEU.TV ${pod[1].id}`
+                            ? `HIEU.TV ${pod[1].epi}`
                             : idPod === '6AFEIFOA'
-                            ? `Đắp Chăn Nằm Nghe Tun Kể ${pod[1].id}`
-                            : `Nắng Thủy Tinh ${pod[1].id}`}
+                            ? `Đắp Chăn Nằm Nghe Tun Kể ${pod[1].epi}`
+                            : `Nắng Thủy Tinh ${pod[1].epi}`}
                         </Text>
                       </View>
-                      <TouchableOpacity style={styles.playPodcast} onPress={() => playSound(pod[1])}>
-                        <Text style={{ color: 'white', marginRight: 4 }}>Play</Text>
-                        <AntDesign name='playcircleo' size={20} color='white' />
+                      <TouchableOpacity onPress={() => playSound(pod[1])}>
+                        {isPlaying && epiID.id === pod[1].id ? (
+                          <View style={styles.playPodcast}>
+                            <Text style={{ color: 'white', marginRight: 4 }}>Pause</Text>
+                            <AntDesign name='pausecircleo' size={20} color='white' />
+                          </View>
+                        ) : (
+                          <View style={styles.playPodcast}>
+                            <Text style={{ color: 'white', marginRight: 4 }}>Play</Text>
+                            <AntDesign name='playcircleo' size={20} color='white' />
+                          </View>
+                        )}
                       </TouchableOpacity>
                     </View>
                   );
