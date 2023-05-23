@@ -5,9 +5,49 @@ import { data } from '../../Api/radio';
 import { AntDesign } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
 
 const CommonPodcast = () => {
-  const [podcast, setPodcast] = useState();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [episode, setEpisode] = useState();
+  const [epiID, setEpiID] = useState();
+
+  const navigation = useNavigation();
+
+  const renderDetailsPodcast = (podcast) => {
+    navigation.navigate('DetailsPodcast', {
+      podcast: podcast,
+    });
+  };
+
+  const playSound = async (podcast) => {
+    const sound = new Audio.Sound();
+    setIsPlaying(!isPlaying);
+    setEpiID(podcast);
+    try {
+      if (podcast.src_mp4 === '../../assets/podcast/p1_41.m4a') {
+        await sound.loadAsync(require('../../assets/podcast/p1_41.m4a'));
+      } else if (podcast.src_mp4 === '../../assets/podcast/p2_01.m4a') {
+        await sound.loadAsync(require('../../assets/podcast/p2_01.m4a'));
+      } else if (podcast.src_mp4 === '../../assets/podcast/p3_03.m4a') {
+        await sound.loadAsync(require('../../assets/podcast/p3_03.m4a'));
+      } else {
+        await sound.loadAsync(require('../../assets/podcast/p4_01.m4a'));
+      }
+      setEpisode(sound);
+      !isPlaying ? sound.playAsync() : sound.pauseAsync();
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    return episode
+      ? () => {
+          episode.unloadAsync();
+        }
+      : undefined;
+  }, [episode]);
 
   const renderPodcast = (podcast, idPod, keyPod) => {
     return (
@@ -26,17 +66,26 @@ const CommonPodcast = () => {
                       <View style={{ flexDirection: 'row' }}>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', width: 220 }} numberOfLines={2}>
                           {idPod === '6BUUFAEO'
-                            ? `How2Money x Doctor Housing ${pod[1].id}`
+                            ? `How2Money x Doctor Housing ${pod[1].epi}`
                             : idPod === '6BWAABIO'
-                            ? `HIEU.TV ${pod[1].id}`
+                            ? `HIEU.TV ${pod[1].epi}`
                             : idPod === '6AFEIFOA'
-                            ? `Đắp Chăn Nằm Nghe Tun Kể ${pod[1].id}`
-                            : `Nắng Thủy Tinh ${pod[1].id}`}
+                            ? `Đắp Chăn Nằm Nghe Tun Kể ${pod[1].epi}`
+                            : `Nắng Thủy Tinh ${pod[1].epi}`}
                         </Text>
                       </View>
-                      <TouchableOpacity style={styles.playPodcast}>
-                        <Text style={{ color: 'white', marginRight: 4 }}>Play</Text>
-                        <AntDesign name='playcircleo' size={20} color='white' />
+                      <TouchableOpacity onPress={() => playSound(pod[1])}>
+                        {isPlaying && epiID.id === pod[1].id ? (
+                          <View style={styles.playPodcast}>
+                            <Text style={{ color: 'white', marginRight: 4 }}>Pause</Text>
+                            <AntDesign name='pausecircleo' size={20} color='white' />
+                          </View>
+                        ) : (
+                          <View style={styles.playPodcast}>
+                            <Text style={{ color: 'white', marginRight: 4 }}>Play</Text>
+                            <AntDesign name='playcircleo' size={20} color='white' />
+                          </View>
+                        )}
                       </TouchableOpacity>
                     </View>
                   );
@@ -68,7 +117,7 @@ const CommonPodcast = () => {
                         <Text numberOfLines={4} style={styles.descriptionText}>
                           {podcast.description}
                         </Text>
-                        <TouchableOpacity style={styles.descriptionAbout}>
+                        <TouchableOpacity style={styles.descriptionAbout} onPress={() => renderDetailsPodcast(podcast)}>
                           <Text>Xem Thêm</Text>
                           <AntDesign name='caretright' size={20} color='black' />
                         </TouchableOpacity>
@@ -95,7 +144,6 @@ const CommonPodcast = () => {
                     style={{ flex: 1, padding: 12 }}
                   >
                     <View>{renderPodcast(podcast, '6BUUFAEO', 'episode_1')}</View>
-                    <View>{renderPodcast(podcast, '6AFEIFOA', 'episode_43')}</View>
                     <View>{renderPodcast(podcast, '6BWAABIO', 'episode_3')}</View>
                     <View>{renderPodcast(podcast, '6AFEIFOA', 'episode_41')}</View>
                     <View>{renderPodcast(podcast, '69U9W7ZI', 'episode_1')}</View>

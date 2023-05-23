@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StyleSheet } from 'react-native';
@@ -9,6 +8,7 @@ import SignIn from './components/Login/SignIn';
 import SignUp from './components/Login/SignUp';
 import ChartContainer from './components/Chart/ChartContainer';
 import RadioContainer from './components/Radio/RadioContainer';
+import DetailsPodcast from './components/Radio/DetailsPodcast';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +22,7 @@ export default function App() {
         <Stack.Screen name='HomeContainer' component={HomeContainer} />
         <Stack.Screen name='ChartContainer' component={ChartContainer} />
         <Stack.Screen name='RadioContainer' component={RadioContainer} />
+        <Stack.Screen name='DetailsPodcast' component={DetailsPodcast} />
       </Stack.Navigator>
     </NavigationContainer>
   );
