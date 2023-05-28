@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { View, SafeAreaView, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, SafeAreaView, TextInput, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 
 const Header = ({ logout, setLogout }) => {
   const [text, setText] = useState('');
+
+  const showNoti = () => {
+    return Alert.alert('Thông báo', 'Hiện tại không có thông báo nào', [{ text: 'OK', style: 'cancel' }]);
+  };
 
   return (
     <SafeAreaView style={styles.header}>
@@ -24,9 +28,9 @@ const Header = ({ logout, setLogout }) => {
           keyboardType='default'
         />
       </View>
-      <View style={styles.icon}>
+      <TouchableOpacity style={styles.icon} onPress={showNoti}>
         <Ionicons name='notifications' size={24} color='#ADADAD' />
-      </View>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };

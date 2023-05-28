@@ -1,11 +1,12 @@
 import _ from 'lodash';
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
-import AvailableMusic from './AvailableMusic';
 import { useNavigation } from '@react-navigation/native';
+import AvailableMusic from './AvailableMusic';
 import PlayMusic from '../PlayMusic';
+import FavoriteMusic from './FavoriteMusic';
 
 const MyMusic = (props) => {
   const [listMusic, setListMusic] = useState([]);
@@ -14,17 +15,23 @@ const MyMusic = (props) => {
   const [playMusic, setPlayMusic] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playingSong, setPlayingSong] = useState([]);
-  const [sound, setSound] = useState();
 
   const navigation = useNavigation();
 
   const { news, favorite, view, logout } = props;
 
   const removeMusic = (id) => {
+    setIsPlaying(false);
     const deletedSong = _.clone(listMusic);
     const index = _.findIndex(deletedSong, (item) => item._id === id);
     deletedSong.splice(index, 1);
     setListMusic(deletedSong);
+  };
+
+  const addFavorMusic = (song) => {
+    const uniqueFavorMusic = _.uniqWith([...favorMusic, song], _.isEqual);
+    setFavorMusic(uniqueFavorMusic);
+    Alert.alert('Thông báo', 'Đã thêm bài hát vào danh sách yêu thích', [{ text: 'OK', style: 'cancel' }]);
   };
 
   const handlePlayMusic = (song) => {
@@ -62,7 +69,7 @@ const MyMusic = (props) => {
                   </View>
                 </TouchableOpacity>
                 <View style={{ flexDirection: 'row' }}>
-                  <TouchableOpacity style={{ padding: 8 }}>
+                  <TouchableOpacity style={{ padding: 8 }} onPress={() => addFavorMusic(song)}>
                     <AntDesign name='hearto' size={24} color='black' />
                   </TouchableOpacity>
                   <TouchableOpacity style={{ padding: 8 }} onPress={() => handlePlayMusic(song)}>
@@ -115,10 +122,12 @@ const MyMusic = (props) => {
               <Text style={styles.myMusicText}>Nhạc của tôi</Text>
               <View>{handleRenderMusic(listMusic)}</View>
             </View>
-            <View>
-              <Text style={styles.myMusicText}>Nhạc yêu thích</Text>
-              <View>{handleRenderMusic(favorMusic)}</View>
-            </View>
+            <FavoriteMusic
+              playSound={isPlaying}
+              setPlaySound={setIsPlaying}
+              favorMusic={favorMusic}
+              currSong={(item) => handlePlayMusic(item)}
+            />
           </ScrollView>
         )}
       </View>

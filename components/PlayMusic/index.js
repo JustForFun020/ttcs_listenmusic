@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AntDesign, FontAwesome5, FontAwesome } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 
